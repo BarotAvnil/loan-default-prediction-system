@@ -8,7 +8,8 @@ import {
     Info,
     ChevronDown,
     ChevronUp,
-    AlertCircle
+    AlertCircle,
+    Terminal
 } from "lucide-react";
 import {
     Card,
@@ -230,31 +231,47 @@ export function ModelComparison() {
                 </div>
             </div>
 
-            {/* Final Selection Summary */}
-            <Card className="bg-primary/10 border-primary/20 backdrop-blur-xl shadow-[0_0_30px_rgba(99,102,241,0.1)]">
-                <CardHeader>
-                    <div className="flex items-center gap-2">
-                        <Trophy className="h-6 w-6 text-yellow-500 animate-pulse" />
-                        <CardTitle>Final Model Selection Summary</CardTitle>
+            {/* Final Selection Summary - Terminal Style */}
+            <div className="rounded-lg border border-dashed border-primary/40 bg-card/40 backdrop-blur-md overflow-hidden flex flex-col shadow-lg shadow-primary/5">
+                <div className="bg-primary/10 px-4 py-2 border-b border-primary/20 flex items-center justify-between">
+                    <span className="text-xs font-mono text-primary font-bold tracking-widest flex items-center gap-2">
+                        <Terminal className="h-4 w-4" />
+                        SYSTEM_LOG_FINAL_SELECTION
+                    </span>
+                    <div className="flex gap-1.5 opacity-70">
+                        <div className="h-2 w-2 rounded-full bg-red-500/50" />
+                        <div className="h-2 w-2 rounded-full bg-yellow-500/50" />
+                        <div className="h-2 w-2 rounded-full bg-green-500/50" />
                     </div>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                    <p className="text-lg font-medium leading-relaxed text-foreground dark:text-gray-200">
-                        Although several models (Gradient Boosting, AdaBoost) achieved high accuracy (~89%), they failed to effectively detect defaulters (Recall ~5%).
-                    </p>
-                    <div className="flex items-start gap-3 p-4 bg-card dark:bg-black/40 rounded-xl border border-primary/20">
-                        <div className="p-2 bg-green-500/10 rounded-full mt-1">
-                            <CheckCircle2 className="h-5 w-5 text-green-500" />
+                </div>
+
+                <div className="p-6 font-mono space-y-6 relative">
+                    {/* Background Grid Hook */}
+                    <div className="absolute inset-0 z-0 opacity-10 bg-[linear-gradient(to_right,var(--color-primary)_1px,transparent_1px),linear-gradient(to_bottom,var(--color-primary)_1px,transparent_1px)] bg-[size:20px_20px]" />
+
+                    <div className="relative z-10 space-y-4">
+                        <div className="flex items-start gap-4">
+                            <div className="p-3 bg-primary/20 rounded border border-primary/30 mt-1">
+                                <Trophy className="h-6 w-6 text-primary animate-pulse" />
+                            </div>
+                            <div className="space-y-2">
+                                <h3 className="text-lg font-bold text-primary tracking-wide">
+                                    {">>"} OPTIMIZED RANDOM FOREST
+                                </h3>
+                                <p className="text-sm text-foreground/80 leading-relaxed max-w-2xl">
+                                    <span className="text-muted-foreground mr-2">[ANALYSIS]:</span>
+                                    Selected as the optimal model for deployment. While standard boosting algorithms achieved higher raw accuracy (89%), they failed to capture risk entities (Recall ~5%).
+                                </p>
+                            </div>
                         </div>
-                        <div>
-                            <p className="font-semibold text-lg mb-1 text-foreground dark:text-white">Why Optimized Random Forest?</p>
-                            <p className="text-muted-foreground leading-relaxed">
-                                The <span className="text-primary font-bold">Optimized Random Forest</span> was selected because it delivers the <span className="font-bold text-foreground dark:text-white">best overall balance</span>. It sacrifices some raw accuracy to achieve a much higher Recall (62%), ensuring we correctly identify a significant portion of potential defaulters while maintaining a stable F1-score across validation folds.
-                            </p>
+
+                        <div className="bg-background/40 border-l-2 border-primary/50 p-4 text-xs text-muted-foreground leading-relaxed">
+                            <span className="text-primary font-bold block mb-1">RATIONALE_PROTOCOL_INIT:</span>
+                            The Optimized Random Forest provides the <span className="text-foreground font-bold border-b border-primary/30">best stability matrix</span>. By prioritizing Recall (62%), we minimize critical failure points (missed defaults) while maintaining acceptable precision thresholds.
                         </div>
                     </div>
-                </CardContent>
-            </Card>
+                </div>
+            </div>
         </section>
     );
 }
