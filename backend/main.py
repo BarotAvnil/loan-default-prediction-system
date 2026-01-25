@@ -17,19 +17,7 @@ scaler = pickle.load(open("model/scaler.pkl", "rb"))
 def root():
     return {"message": "Loan Default Prediction API is running"}
 
-@app.post("/predict")
-def predict(data: LoanInput):
-    features = np.array(data.features).reshape(1, -1)
-    features_scaled = scaler.transform(features)
 
-    pred = model.predict(features_scaled)[0]
-    prob = model.predict_proba(features_scaled)[0][1]
-
-    return {
-        "prediction": int(pred),
-        "label": "Default" if pred == 1 else "Non-Default",
-        "default_probability": round(float(prob), 4)
-    }
 
 EXPECTED_FEATURES = [
     "Age","Income","LoanAmount","CreditScore","MonthsEmployed",

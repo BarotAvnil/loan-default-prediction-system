@@ -1,13 +1,13 @@
 import { NextResponse } from 'next/server';
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'https://loan-default-backend-poad.onrender.com';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://loan-default-backend-poad.onrender.com';
 
 export async function POST(request: Request) {
     try {
         const body = await request.json();
-        console.log(`Proxying request to: ${BACKEND_URL}/predict`);
+        console.log(`Proxying request to: ${API_URL}/predict`);
 
-        const response = await fetch(`${BACKEND_URL}/predict`, {
+        const response = await fetch(`${API_URL}/predict`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

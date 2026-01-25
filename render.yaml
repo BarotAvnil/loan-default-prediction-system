@@ -1,0 +1,24 @@
+services:
+  # Backend Service (Existing)
+  - type: web
+    name: loan-default-api
+    root: backend
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port 10000
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.9.0
+
+  # Frontend Service (New)
+  - type: web
+    name: loan-default-frontend
+    root: frontend
+    env: node
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NEXT_PUBLIC_API_URL
+        value: https://loan-default-backend-poad.onrender.com
