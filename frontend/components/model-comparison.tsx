@@ -232,8 +232,8 @@ export function ModelComparison() {
             </div>
 
             {/* Final Selection Summary - Terminal Style */}
-            <div className="rounded-lg border border-dashed border-primary/40 bg-card/40 backdrop-blur-md overflow-hidden flex flex-col shadow-lg shadow-primary/5">
-                <div className="bg-primary/10 px-4 py-2 border-b border-primary/20 flex items-center justify-between">
+            <div className="rounded-lg border border-dashed border-primary/50 bg-blue-50/80 dark:bg-gradient-to-br dark:from-primary/10 dark:via-primary/5 dark:to-transparent backdrop-blur-md overflow-hidden flex flex-col shadow-[0_0_40px_rgba(59,130,246,0.1)]">
+                <div className="bg-primary/20 px-4 py-2 border-b border-primary/20 flex items-center justify-between">
                     <span className="text-xs font-mono text-primary font-bold tracking-widest flex items-center gap-2">
                         <Terminal className="h-4 w-4" />
                         SYSTEM_LOG_FINAL_SELECTION
@@ -247,25 +247,25 @@ export function ModelComparison() {
 
                 <div className="p-6 font-mono space-y-6 relative">
                     {/* Background Grid Hook */}
-                    <div className="absolute inset-0 z-0 opacity-10 bg-[linear-gradient(to_right,var(--color-primary)_1px,transparent_1px),linear-gradient(to_bottom,var(--color-primary)_1px,transparent_1px)] bg-[size:20px_20px]" />
+                    <div className="absolute inset-0 z-0 opacity-20 bg-[linear-gradient(to_right,var(--color-primary)_1px,transparent_1px),linear-gradient(to_bottom,var(--color-primary)_1px,transparent_1px)] bg-[size:20px_20px]" />
 
                     <div className="relative z-10 space-y-4">
                         <div className="flex items-start gap-4">
-                            <div className="p-3 bg-primary/20 rounded border border-primary/30 mt-1">
+                            <div className="p-3 bg-white/50 dark:bg-primary/20 rounded border border-primary/30 mt-1 shadow-[0_0_15px_rgba(59,130,246,0.2)]">
                                 <Trophy className="h-6 w-6 text-primary animate-pulse" />
                             </div>
                             <div className="space-y-2">
-                                <h3 className="text-lg font-bold text-primary tracking-wide">
+                                <h3 className="text-lg font-bold text-primary tracking-wide drop-shadow-sm">
                                     {">>"} OPTIMIZED RANDOM FOREST
                                 </h3>
-                                <p className="text-sm text-foreground/80 leading-relaxed max-w-2xl">
-                                    <span className="text-muted-foreground mr-2">[ANALYSIS]:</span>
+                                <p className="text-sm text-foreground/90 leading-relaxed max-w-2xl">
+                                    <span className="text-primary/70 mr-2">[ANALYSIS]:</span>
                                     Selected as the optimal model for deployment. While standard boosting algorithms achieved higher raw accuracy (89%), they failed to capture risk entities (Recall ~5%).
                                 </p>
                             </div>
                         </div>
 
-                        <div className="bg-background/40 border-l-2 border-primary/50 p-4 text-xs text-muted-foreground leading-relaxed">
+                        <div className="bg-white/60 dark:bg-primary/5 border-l-2 border-primary p-4 text-xs text-muted-foreground leading-relaxed shadow-inner backdrop-blur-sm">
                             <span className="text-primary font-bold block mb-1">RATIONALE_PROTOCOL_INIT:</span>
                             The Optimized Random Forest provides the <span className="text-foreground font-bold border-b border-primary/30">best stability matrix</span>. By prioritizing Recall (62%), we minimize critical failure points (missed defaults) while maintaining acceptable precision thresholds.
                         </div>
