@@ -45,7 +45,7 @@ The system evaluates multiple models and selects the **Optimized Random Forest**
 
 ### 1. Clone the Repository
 ```bash
-git clone [https://github.com/BarotAvnil/loan-default-prediction-system]
+git clone https://github.com/BarotAvnil/loan-default-prediction-system
 cd loan-default-prediction-system
 ```
 
