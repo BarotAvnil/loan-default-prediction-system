@@ -10,4 +10,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Ping Backend
-        run: curl -I https://loan-default-backend-poad.onrender.com/
+        run: curl https://loan-default-backend-poad.onrender.com/health
