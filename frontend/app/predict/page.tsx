@@ -15,6 +15,8 @@ import {
 import { predictLoanDefault } from "@/lib/api";
 import { Loader2, AlertCircle, CheckCircle2, Terminal, ChevronRight, Activity, Cpu, Info } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 export default function PredictPage() {
     const [loading, setLoading] = useState(false);
@@ -23,6 +25,7 @@ export default function PredictPage() {
 
     const [formData, setFormData] = useState({
         // Numeric
+        name: "", // Optional Name field
         age: "",
         income: "",
         loan_amount: "",
@@ -94,6 +97,181 @@ export default function PredictPage() {
         }
     };
 
+    const handleExportPDF = () => {
+        if (!result) return;
+
+        const doc = new jsPDF();
+        const pageWidth = doc.internal.pageSize.width;
+        const pageHeight = doc.internal.pageSize.height;
+        const margin = 14;
+
+        // --- Colors ---
+        const primaryColor = "#4F46E5"; // Indigo 600
+        const successColor = "#059669"; // Emerald 600
+        const dangerColor = "#DC2626"; // Red 600
+        const darkText = "#1F2937"; // Gray 800
+        const lightText = "#6B7280"; // Gray 500
+
+        // --- Header ---
+        doc.setFillColor(primaryColor);
+        doc.rect(0, 0, pageWidth, 5, "F"); // Top colored bar
+
+        doc.setFontSize(22);
+        doc.setTextColor(primaryColor);
+        doc.setFont("helvetica", "bold");
+        doc.text("CREDITGUARD.AI", margin, 20);
+
+        doc.setFontSize(10);
+        doc.setTextColor(lightText);
+        doc.setFont("helvetica", "normal");
+        doc.text("INTELLIGENT RISK ASSESSMENT SYSTEM", margin, 26);
+
+        // Metadata (Right aligned)
+        const dateStr = new Date().toLocaleDateString();
+        const refId = Math.random().toString(36).substr(2, 9).toUpperCase();
+
+        doc.setFontSize(9);
+        doc.text(`DATE: ${dateStr}`, pageWidth - margin, 20, { align: "right" });
+        doc.text(`REF ID: #REF-${refId}`, pageWidth - margin, 25, { align: "right" });
+
+        // Prepared For
+        if (formData.name) {
+            doc.setFontSize(11);
+            doc.setTextColor(darkText);
+            doc.text(`PREPARED FOR: ${formData.name.toUpperCase()}`, margin, 38);
+        }
+
+        // --- Executive Summary ---
+        const summaryY = formData.name ? 45 : 35;
+        const isHighRisk = result.prediction === 1;
+        const summaryColor = isHighRisk ? dangerColor : successColor;
+        const summaryBg = isHighRisk ? "#FEF2F2" : "#ECFDF5"; // Very light red/green
+
+        // Background Box
+        doc.setDrawColor(summaryColor);
+        doc.setFillColor(summaryBg);
+        doc.roundedRect(margin, summaryY, pageWidth - (margin * 2), 35, 2, 2, "FD");
+
+        // Status Text
+        doc.setFontSize(16);
+        doc.setTextColor(summaryColor);
+        doc.setFont("helvetica", "bold");
+        doc.text(isHighRisk ? "RISK ASSESSMENT: HIGH RISK" : "RISK ASSESSMENT: LOW RISK", margin + 6, summaryY + 12);
+
+        // Probability
+        doc.setFontSize(10);
+        doc.setTextColor(darkText);
+        doc.setFont("helvetica", "bold");
+        doc.text(`DEFAULT PROBABILITY: ${(result.default_probability * 100).toFixed(2)}%`, margin + 6, summaryY + 22);
+
+        // Advisory
+        doc.setFontSize(9);
+        doc.setFont("helvetica", "italic");
+        doc.setTextColor(lightText);
+        const advisory = isHighRisk
+            ? "NOTICE: This entity has been flagged for potential default. Enhanced due diligence is recommended before proceeding."
+            : "NOTICE: This entity falls within acceptable risk thresholds. Standard approval protocols apply.";
+        doc.text(advisory, margin + 6, summaryY + 30);
+
+
+        // --- Key Risk Drivers (Highlights) ---
+        const driversY = summaryY + 45;
+        doc.setFontSize(12);
+        doc.setTextColor(darkText);
+        doc.setFont("helvetica", "bold");
+        doc.text("KEY RISK FACTORS", margin, driversY);
+
+        // Draw 4 Highlight Boxes
+        const boxWidth = (pageWidth - (margin * 2) - 15) / 4; // 3 gaps of 5
+        const boxHeight = 25;
+        const driverStartY = driversY + 5;
+
+        const drivers = [
+            { label: "CREDIT SCORE", value: formData.credit_score, color: "#4F46E5" },
+            { label: "DTI RATIO", value: formData.dti_ratio, color: "#4F46E5" },
+            { label: "ANNUAL INCOME", value: `$${Number(formData.income).toLocaleString()}`, color: "#4F46E5" },
+            { label: "LOAN AMOUNT", value: `$${Number(formData.loan_amount).toLocaleString()}`, color: "#4F46E5" },
+        ];
+
+        drivers.forEach((driver, index) => {
+            const x = margin + (index * (boxWidth + 5));
+
+            // Box Border
+            doc.setDrawColor("#E5E7EB"); // Light gray
+            doc.setFillColor("#F9FAFB"); // Very light gray
+            doc.roundedRect(x, driverStartY, boxWidth, boxHeight, 1, 1, "FD");
+
+            // Label
+            doc.setFontSize(7);
+            doc.setTextColor(lightText);
+            doc.setFont("helvetica", "bold");
+            doc.text(driver.label, x + (boxWidth / 2), driverStartY + 8, { align: "center" });
+
+            // Value
+            doc.setFontSize(11);
+            doc.setTextColor(driver.color);
+            doc.text(String(driver.value), x + (boxWidth / 2), driverStartY + 18, { align: "center" });
+        });
+
+        // --- Comprehensive Data Table ---
+        const tableStartY = driverStartY + boxHeight + 10;
+
+        const tableData = [
+            [{ content: "FINANCIAL VECTORS", colSpan: 2, styles: { fillColor: [243, 244, 246] as [number, number, number], fontStyle: 'bold' as 'bold', textColor: [31, 41, 55] as [number, number, number] } }],
+            ["Annual Income", `$${Number(formData.income).toLocaleString()}`],
+            ["Loan Amount", `$${Number(formData.loan_amount).toLocaleString()}`],
+            ["Credit Score", formData.credit_score],
+            ["Months Employed", formData.months_employed],
+            ["Num Credit Lines", formData.num_credit_lines],
+            ["Interest Rate", `${formData.interest_rate}%`],
+            ["Loan Term", `${formData.loan_term} months`],
+            ["DTI Ratio", formData.dti_ratio],
+
+            [{ content: "PERSONAL IDENTIFIERS", colSpan: 2, styles: { fillColor: [243, 244, 246] as [number, number, number], fontStyle: 'bold' as 'bold', textColor: [31, 41, 55] as [number, number, number] } }],
+            ["Age", formData.age],
+            ["Education", formData.education],
+            ["Employment Type", formData.employment_type],
+            ["Marital Status", formData.marital_status],
+            ["Has Mortgage", formData.has_mortgage === "1" ? "Yes" : "No"],
+            ["Has Dependents", formData.has_dependents === "1" ? "Yes" : "No"],
+            ["Loan Purpose", formData.loan_purpose],
+            ["Has Cosigner", formData.has_cosigner === "1" ? "Yes" : "No"],
+        ];
+
+        autoTable(doc, {
+            body: tableData,
+            startY: tableStartY,
+            theme: 'grid',
+            styles: {
+                fontSize: 9,
+                cellPadding: 3,
+                lineColor: [229, 231, 235] as [number, number, number],
+                lineWidth: 0.1,
+            },
+            headStyles: {
+                fillColor: [79, 70, 229] as [number, number, number],
+                textColor: [255, 255, 255] as [number, number, number],
+                fontStyle: 'bold' as 'bold'
+            },
+            columnStyles: {
+                0: { cellWidth: 80, fontStyle: 'bold' as 'bold', textColor: [75, 85, 99] as [number, number, number] },
+                1: { textColor: [17, 24, 39] as [number, number, number] }
+            },
+            alternateRowStyles: {
+                fillColor: [255, 255, 255] as [number, number, number]
+            }
+        });
+
+        // --- Footer ---
+        const footerY = pageHeight - 10;
+        doc.setFontSize(8);
+        doc.setTextColor(lightText);
+        doc.text("CONFIDENTIAL: This report is generated by CreditGuard.AI for internal review only.", margin, footerY);
+        doc.text("Page 1 of 1", pageWidth - margin, footerY, { align: "right" });
+
+        doc.save("CreditGuard_Professional_Report.pdf");
+    };
+
     return (
         <div className="min-h-screen bg-background text-foreground font-sans selection:bg-primary/20 flex flex-col">
             <Navbar />
@@ -148,6 +326,9 @@ export default function PredictPage() {
                                             <Cpu className="h-3 w-3" /> Personal_Identifiers
                                         </h3>
                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
+                                            <div className="sm:col-span-2">
+                                                <TerminalInput label="Applicant Name (Optional)" id="name" placeholder="John Doe" type="text" help="Name to appear on the generated report." required={false} onChange={handleChange} />
+                                            </div>
                                             <TerminalInput label="Age" id="age" placeholder="32" help="Applicant's age in years." onChange={handleChange} />
                                             <TerminalInput label="Employ. Mos" id="months_employed" placeholder="48" help="Total months of continuous employment." onChange={handleChange} />
                                             <TerminalInput label="Cred Lines" id="num_credit_lines" placeholder="2" help="Number of active or past credit lines." onChange={handleChange} />
@@ -271,7 +452,7 @@ export default function PredictPage() {
                                                     : "Entity clears standard risk thresholds. Auto-approval protocols engaged."}
                                             </div>
 
-                                            <Button variant="outline" className="w-full font-mono text-xs border-border hover:bg-secondary text-foreground transition-colors">
+                                            <Button variant="outline" className="w-full font-mono text-xs border-border hover:bg-secondary text-foreground transition-colors" onClick={handleExportPDF}>
                                                 EXPORT_REPORT.PDF
                                             </Button>
                                         </div>
@@ -289,7 +470,7 @@ export default function PredictPage() {
 
 
 
-function TerminalInput({ label, id, placeholder, type = "number", step, onChange, help }: any) {
+function TerminalInput({ label, id, placeholder, type = "number", step, onChange, help, ...rest }: any) {
     return (
         <div className="flex flex-col gap-2 focus-within:text-primary transition-colors group relative">
             <div className="flex items-center gap-2">
@@ -310,7 +491,7 @@ function TerminalInput({ label, id, placeholder, type = "number", step, onChange
                 type={type}
                 step={step}
                 placeholder={placeholder}
-                required
+                required={rest.required ?? true}
                 onChange={onChange}
                 className="h-11 bg-background/50 backdrop-blur-sm border-border text-foreground font-mono text-base focus:border-primary focus:ring-1 focus:ring-primary placeholder:text-muted-foreground/40 rounded-md transition-all"
             />
