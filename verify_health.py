@@ -30,7 +30,6 @@ if __name__ == "__main__":
     if not local_success:
         print("\nNote: Local backend might not be running. That's okay if we are just testing the code changes.")
     
-    # Frontend proxy URL (if running locally)
-    # frontend_url = "http://localhost:3000/api/health"
-    # print(f"\nTesting frontend proxy health check at {frontend_url}...")
-    # check_health(frontend_url)
+    prod_url = "https://loan-default-backend-poad.onrender.com/health"
+    print(f"\nTesting production backend health check at {prod_url}...")
+    check_health(prod_url)
