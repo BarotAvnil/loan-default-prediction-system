@@ -1,0 +1,13 @@
+name: Keep Backend Alive
+
+on:
+  schedule:
+    - cron: '*/14 * * * *'  # Runs every 14 minutes
+  workflow_dispatch:  # Allows manual triggering
+
+jobs:
+  ping_backend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Backend
+        run: curl -I https://loan-default-backend-poad.onrender.com/
