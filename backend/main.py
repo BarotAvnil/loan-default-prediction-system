@@ -9,6 +9,20 @@ app = FastAPI(
     version="1.0"
 )
 
+# Add CORS Middleware
+from fastapi.middleware.cors import CORSMiddleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+@app.get("/health")
+def health_check():
+    return {"status": "ok", "message": "Backend is awake"}
+
 # Load model & scaler
 model = pickle.load(open("model/best_rf.pkl", "rb"))
 scaler = pickle.load(open("model/scaler.pkl", "rb"))

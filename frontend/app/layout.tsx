@@ -12,6 +12,7 @@ export const metadata: Metadata = {
 };
 
 import { ThemeProvider } from "@/components/theme-provider";
+import { KeepAlive } from "@/components/keep-alive";
 
 export default function RootLayout({
   children,
@@ -28,6 +29,7 @@ export default function RootLayout({
           enableSystem={false}
           disableTransitionOnChange
         >
+          <KeepAlive />
           {children}
         </ThemeProvider>
       </body>
