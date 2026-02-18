@@ -13,7 +13,7 @@ export default function Home() {
         <div className="absolute left-0 right-0 top-0 -z-10 m-auto h-[310px] w-[310px] rounded-full bg-primary/20 opacity-20 blur-[100px]"></div>
       </div>
 
-      <main className="flex-1 pt-24 pb-12">
+      <main className="flex-1 pt-32 pb-12">
         <section className="container mx-auto px-4 text-center">
           {/* Main Header */}
           <div className="max-w-4xl mx-auto space-y-4 animate-in fade-in slide-in-from-bottom-8 duration-700">

@@ -15,7 +15,7 @@ export default function AnalyticsPage() {
                 <div className="absolute left-0 right-0 top-0 -z-10 m-auto h-[310px] w-[310px] rounded-full bg-primary/20 opacity-20 blur-[100px]"></div>
             </div>
 
-            <main className="flex-1 flex flex-col px-4 pt-24 pb-4">
+            <main className="flex-1 flex flex-col px-4 pt-32 pb-4">
                 <div className="w-full max-w-6xl mx-auto space-y-2 animate-in fade-in slide-in-from-bottom-8 duration-700">
 
                     <Tabs defaultValue="overview" className="w-full">
