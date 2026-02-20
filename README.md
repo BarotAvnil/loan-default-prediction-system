@@ -2,7 +2,8 @@
 
 A comprehensive Machine Learning application tailored for financial institutions to predict loan defaults with high accuracy. This system leverages an **Optimized Random Forest** model to assess risk factors and aid in decision-making.
 
-![Project Status](https://img.shields.io/badge/status-active-success.svg)
+![Project Status](https://img.shields.io/badge/status-active-success.svg) | [**Live Demo**](https://loan-default-prediction-system.vercel.app/)
+
 
 ## 🚀 Features
 
