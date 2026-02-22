@@ -10,4 +10,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Ping Backend
-        run: curl https://loan-default-backend-poad.onrender.com/health
+        env:
+          BACKEND_URL: ${{ secrets.BACKEND_URL }}
+        run: curl "$BACKEND_URL/health"
